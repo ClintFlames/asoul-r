@@ -2,11 +2,11 @@
 	"name": "asoul-r",
 	"version": "1.0.0-alpha",
 	"description": "Discord bot written in TS with discord.js.",
-	"main": "build/index.js",
+	"main": "build/src/index.js",
 	"scripts": {
 		"tsserver": "tsc -w -p .",
 		"tsbuild": "tsc -p .",
-		"test": "clear && tsc -p . && node ./build/index.js"
+		"test": "clear && tsc -p . && node ./build/src/index.js"
 	},
 	"repository": {
 		"type": "git",

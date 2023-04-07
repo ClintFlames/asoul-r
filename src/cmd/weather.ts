@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Collection, CommandInteractionOptionResolver, EmbedBuilder, InteractionResponse, Locale, SlashCommandBuilder } from "discord.js";
-import { ICommand } from "../type/ICommand";
+import { ICommand } from "../types/ICommand";
 
 const wdata:Collection<string, {
 	pageList:EmbedBuilder[],
@@ -23,7 +23,7 @@ const command:ICommand = {
 				.setRequired(true)
 		) as SlashCommandBuilder
 		,
-	run: async (inter) => {
+	fun: async (inter) => {
 		const pageList:EmbedBuilder[] = [];
 		const wjs:IWjsModule = require("weather-js");
 
@@ -155,11 +155,11 @@ const command:ICommand = {
 			);
 		});
 	},
-	btnrun: async (inter, act) => {
-		const cdata = wdata.get(inter.user.id);
+	btnFun: async (einter) => {
+		const cdata = wdata.get(einter.inter.user.id);
 		if (!cdata) return;
 
-		const iact = act == "previous" ? -1 : 1;
+		const iact = einter.act == "previous" ? -1 : 1;
 		if (!(cdata.curPage + iact >= 0 && cdata.curPage + iact < cdata.pageList.length)) return;
 		cdata.curPage += iact;
 
@@ -175,7 +175,7 @@ const command:ICommand = {
 		}
 
 		cdata.msg.delete();
-		const reply = await inter.reply({ embeds: [cdata.pageList[cdata.curPage]], components: [cdata.btnList] });
+		const reply = await einter.inter.reply({ embeds: [cdata.pageList[cdata.curPage]], components: [cdata.btnList] });
 
 		cdata.msg = reply;
 		cdata.timeout.refresh();

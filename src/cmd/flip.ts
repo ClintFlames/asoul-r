@@ -1,5 +1,5 @@
 import { APIEmbedField, EmbedBuilder, Locale, SlashCommandBuilder } from "discord.js";
-import { ICommand } from "../type/ICommand";
+import { ICommand } from "../types/ICommand";
 
 const command:ICommand = {
 	data: new SlashCommandBuilder()
@@ -7,7 +7,7 @@ const command:ICommand = {
 		.setDescription("Heads or tails")
 		.setNameLocalization("ru", "монета")
 		.setDescriptionLocalization("ru", "Орел или решка"),
-	run: async (inter) => {
+	fun: async (inter) => {
 		if (!inter.isRepliable()) return;
 
 		const isUp = Math.random() < 0.5 ? true : false;

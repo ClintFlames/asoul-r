@@ -1,5 +1,5 @@
 import { APIEmbedField, EmbedBuilder, Locale, SlashCommandBuilder } from "discord.js";
-import { ICommand } from "../type/ICommand";
+import { ICommand } from "../types/ICommand";
 
 const command:ICommand = {
 	data: new SlashCommandBuilder()
@@ -7,7 +7,7 @@ const command:ICommand = {
 		.setDescription("Displays uptime")
 		.setNameLocalization("ru", "аптайм")
 		.setDescriptionLocalization("ru", "Отображает время безотказной работы"),
-	run: async (inter) => {
+	fun: async (inter) => {
 		const time = {
 			ms: inter.client.uptime,
 			s : 0,

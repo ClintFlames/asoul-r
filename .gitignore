@@ -1,5 +1,5 @@
 build
-src/config.json
+config.js
 
 bnr.bat
 
