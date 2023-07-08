@@ -1,11 +1,10 @@
-import { Client, Events, GatewayIntentBits, ActivityType, Collection, REST, Routes } from "discord.js";
+import { Client, Events, GatewayIntentBits, Collection, REST, Routes } from "discord.js";
 import { ICommand } from "./types/ICommand";
 import { EClient } from "./types/EClient";
 import { readdir } from "fs";
 import path from "path";
-import { IConfig } from "./types/IConfig";
+import { config } from "../config";
 
-const config:IConfig = require(path.join(__dirname, "..", "config.js"));
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] }) as EClient;
 
@@ -69,6 +68,6 @@ readdir(path.join(__dirname, "cmd"), "utf-8", (e, fileList) => {
 		Routes.applicationCommands(config.applicationId),
 		{ body: restBody }
 	);
-})
+});
 
 client.login(config.token);

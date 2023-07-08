@@ -1,12 +1,13 @@
 {
 	"name": "asoul-r",
-	"version": "1.0.0-alpha",
+	"version": "1.0.0-beta",
 	"description": "Discord bot written in TS with discord.js.",
 	"main": "build/src/index.js",
 	"scripts": {
 		"tsserver": "tsc -w -p .",
-		"tsbuild": "tsc -p .",
-		"test": "clear && tsc -p . && node ./build/src/index.js"
+		"build": "tsc -p .",
+		"freshbuild": "rm -r ./build/ && tsc -p .",
+		"test": "clear && tsc -p . && node ."
 	},
 	"repository": {
 		"type": "git",
@@ -25,6 +26,7 @@
 	"homepage": "https://github.com/ClintFlames/asoul-r#readme",
 	"dependencies": {
 		"discord.js": "14.9.0",
+		"qrcode": "1.5.3",
 		"weather-js": "2.0.0"
 	},
 	"devDependencies": {

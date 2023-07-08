@@ -1,6 +1,5 @@
 import { ActivityOptions } from "discord.js"
 
-
 export interface IConfig {
 	token:string,
 	applicationId:string,

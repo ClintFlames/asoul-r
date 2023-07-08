@@ -8,8 +8,6 @@ const command:ICommand = {
 		.setNameLocalization("ru", "монета")
 		.setDescriptionLocalization("ru", "Орел или решка"),
 	fun: async (inter) => {
-		if (!inter.isRepliable()) return;
-
 		const isUp = Math.random() < 0.5 ? true : false;
 
 		const embed = new EmbedBuilder()
