@@ -6,6 +6,7 @@ In 2019, I created the ASOUL my first discord bot. But due to the fact that I di
 ### Functional
 ASOUL has always been a tool bot. What does it mean? ASOUL has no database, hence no settings. But it can do some useful things, such as generating a short link or a qr-code.
 ### Commands
+info - Displays info about bot<br>
 uptime - Displays uptime<br>
 flip - Heads or tails<br>
 qrcode - Generates QR code from text or link<br>
