@@ -15,7 +15,7 @@ client.once(Events.ClientReady, () => {
 	if (!client.user) throw new Error(`"Client.user" is empty.`);
 	console.log("Online as " + client.user.tag);
 	let iStat = 0;
-	
+
 	const statusFun = () => {
 		// !Useless return but ts returns error
 		if (!client.user) return;
@@ -56,18 +56,21 @@ readdir(path.join(__dirname, "cmd"), "utf-8", (e, fileList) => {
 	const restBody = [];
 	for (let file of fileList) {
 		if (!file.endsWith(".js")) continue;
-		const cmd:ICommand = require(path.join(__dirname, "cmd", file));
+		const cmd: ICommand = require(path.join(__dirname, "cmd", file));
 		file = file.slice(0, -3);
 		restBody.push(cmd.data.toJSON());
 		client.cmdList.set(file, cmd.fun);
 		if (cmd.btnFun) client.btnList.set(file, cmd.btnFun);
 	}
 
+	console.log(`Found ${client.cmdList.size} commands:
+${[...client.cmdList.keys()].map(v => "  " + v).join("\n")}`);
+
 	// Sending commands to discord to add it
 	new REST({ version: "10" }).setToken(config.token).put(
 		Routes.applicationCommands(config.applicationId),
 		{ body: restBody }
-	);
+	).then(() => {
+		client.login(config.token);
+	});
 });
-
-client.login(config.token);
