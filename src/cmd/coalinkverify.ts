@@ -22,7 +22,7 @@ const command: ICommand = {
         .setRequired(true)
     ) as SlashCommandBuilder,
   fun: async (inter) => {
-    if (!config.godList.includes(inter.user.id)) return inter.reply("ONLY ADMINS CAN TYPE THIS COMMAND");
+    if (!config.coasdb.adminList.includes(inter.user.id)) return inter.reply("ONLY ADMINS CAN TYPE THIS COMMAND");
 
     await inter.deferReply();
     const url = config.coasdb.url;
