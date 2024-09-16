@@ -1,7 +1,7 @@
 import { ActivityType } from "discord.js";
 import { IConfig } from "./src/types/IConfig";
 
-export const config:IConfig = {
+export const config: IConfig = {
 	// Your bot token
 	token: "bot token",
 	// Application Id, NOT bot Id
@@ -21,5 +21,11 @@ export const config:IConfig = {
 			name: "watching example",
 			type: ActivityType.Watching
 		}
-	]
+	],
+	coasdb: {
+		url: "http://127.0.0.1:13010",
+		adminList: [
+			"user id"
+		]
+	}
 }

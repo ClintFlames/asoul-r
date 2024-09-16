@@ -7,6 +7,7 @@ export interface IConfig {
 	statusSwitchInterval: number,
 	statusList: ActivityOptions[],
 	coasdb: {
-		url: string
+		url: string,
+		adminList: string[]
 	}
 }
