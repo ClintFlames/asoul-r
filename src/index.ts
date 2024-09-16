@@ -10,6 +10,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds] }) as EClient;
 
 client.cmdList = new Collection();
 client.btnList = new Collection();
+client.sltList = new Collection();
 
 client.once(Events.ClientReady, () => {
 	if (!client.user) throw new Error(`"Client.user" is empty.`);
@@ -30,6 +31,7 @@ client.once(Events.ClientReady, () => {
 
 // Handling interactions
 client.on(Events.InteractionCreate, async inter => {
+	// TODO: Check if able to send message
 	if (inter.isChatInputCommand()) {
 		const fun = client.cmdList.get(inter.commandName);
 		if (!fun) return;
@@ -47,6 +49,14 @@ client.on(Events.InteractionCreate, async inter => {
 		} catch (e) {
 			console.log(`Error at button "${inter.customId}", e:${e}`);
 		}
+	} else if (inter.isStringSelectMenu()) {
+		const sltFun = client.sltList.get(inter.customId);
+		if (!sltFun) return;
+		try {
+			await sltFun(inter);
+		} catch (e) {
+			console.log(`Error at string select menu "${inter.customId}", e:${e}`);
+		}
 	}
 });
 
@@ -61,6 +71,7 @@ readdir(path.join(__dirname, "cmd"), "utf-8", (e, fileList) => {
 		restBody.push(cmd.data.toJSON());
 		client.cmdList.set(file, cmd.fun);
 		if (cmd.btnFun) client.btnList.set(file, cmd.btnFun);
+		if (cmd.sltFun) client.sltList.set(file, cmd.sltFun);
 	}
 
 	console.log(`Found ${client.cmdList.size} commands:
@@ -70,7 +81,7 @@ ${[...client.cmdList.keys()].map(v => "  " + v).join("\n")}`);
 	new REST({ version: "10" }).setToken(config.token).put(
 		Routes.applicationCommands(config.applicationId),
 		{ body: restBody }
-	).then(() => {
-		client.login(config.token);
-	});
+	);
 });
+
+client.login(config.token);
