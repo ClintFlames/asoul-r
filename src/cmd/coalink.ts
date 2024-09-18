@@ -14,7 +14,17 @@ const command: ICommand = {
   fun: async (inter) => {
     await inter.deferReply();
     const url = config.coasdb.url;
-    const apiInfo = await (await fetch(url)).json();
+    let apiInfo: any = null;
+    try {
+      apiInfo = await (await fetch(url)).json();
+    } catch (e) {
+      const embed = new EmbedBuilder()
+        .setTitle("Sorry, can't reach api. Try again later.")
+        .setColor(0xff6666)
+        .setTimestamp();
+      return inter.editReply({ embeds: [embed] });
+    }
+
     const embed = new EmbedBuilder()
       .setFooter({ text: "Next update" })
       .setTimestamp(apiInfo.next_update);
@@ -53,10 +63,11 @@ const command: ICommand = {
       }
     )).json();
 
-    inter.editReply("```\n" +
-      JSON.stringify(result, null, 2) + "\n" +
-      JSON.stringify(apiInfo, null, 2)
-      + "\n```");
+    embed.setColor(0x66ff66)
+      .setTitle("Yay! You linked your player to your account.")
+      .setDescription("But it's not verified, so anyone can relink it to their discord. You can ask admins for verefication.")
+
+    inter.editReply({ embeds: [embed] });
   }
 }
 

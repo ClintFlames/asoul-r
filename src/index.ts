@@ -38,7 +38,8 @@ client.on(Events.InteractionCreate, async inter => {
 		try {
 			await fun(inter);
 		} catch (e) {
-			console.log(`Error at command "${inter.commandName}", e:${e}`);
+			console.log(`Error at command "${inter.commandName}"`);
+			console.log(e)
 		}
 	} else if (inter.isButton()) {
 		const [cmd, act] = inter.customId.split("@");

@@ -26,7 +26,17 @@ const command: ICommand = {
 
     await inter.deferReply();
     const url = config.coasdb.url;
-    const apiInfo = await (await fetch(url)).json();
+    let apiInfo: any = null;
+    try {
+      apiInfo = await (await fetch(url)).json();
+    } catch (e) {
+      const embed = new EmbedBuilder()
+        .setTitle("Sorry, can't reach api. Try again later.")
+        .setColor(0xff6666)
+        .setTimestamp();
+      return inter.editReply({ embeds: [embed] });
+    }
+
     const embed = new EmbedBuilder()
       .setFooter({ text: "Next update" })
       .setTimestamp(apiInfo.next_update);
