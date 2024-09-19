@@ -1,7 +1,8 @@
-import { APIEmbedField, ActionRowBuilder, EmbedBuilder, Locale, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from "discord.js";
+import { APIEmbedField, ActionRowBuilder, EmbedBuilder, Interaction, Locale, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from "discord.js";
 import { ICommand } from "../types/ICommand";
 import { config } from "../../config";
 import Levenshtein from "levenshtein";
+import { CoaPrettier } from "../types/CoaPrettier";
 
 const command: ICommand = {
   data: new SlashCommandBuilder()
@@ -15,7 +16,17 @@ const command: ICommand = {
   fun: async (inter) => {
     await inter.deferReply();
     const url = config.coasdb.url;
-    const apiInfo = await (await fetch(url)).json();
+    let apiInfo: any = null;
+    try {
+      apiInfo = await (await fetch(url)).json();
+    } catch (e) {
+      const embed = new EmbedBuilder()
+        .setTitle("Sorry, can't reach api. Try again later.")
+        .setColor(0xff6666)
+        .setTimestamp();
+      return inter.editReply({ embeds: [embed] });
+    }
+
     const embed = new EmbedBuilder()
       .setFooter({ text: "Next update" })
       .setTimestamp(apiInfo.next_update);
@@ -31,12 +42,25 @@ const command: ICommand = {
 
     if (id != null) {
       const guild = await (await fetch(url + "/guild/" + id)).json();
+      let guildIconURL = null;
+      let guildBannerURL = null;
+      try {
+        if (guild?.discord_server?.id) {
+          const dguild = await inter.client.guilds.fetch(guild.discord_server.id);
+          guildIconURL = dguild.iconURL({ size: 128 });
+          guildBannerURL = dguild.bannerURL({ size: 1024 });
+        }
+      } catch (e) { }
 
-      return inter.editReply("```\n" +
-        JSON.stringify(guild, null, 2) + "\n" +
-        JSON.stringify(apiInfo, null, 2)
-        + "\n```");
+      return inter.editReply({
+        embeds: [(await CoaPrettier.guildToEmbed(
+          guild,
+          guildIconURL,
+          guildBannerURL
+        ))[0]]
+      });
     }
+
     // If guild not found
     embed.setColor(0xFF6666)
       .setTitle(`Guild "${reqName}" not found, maybe you mean one of these?`);
@@ -73,19 +97,26 @@ const command: ICommand = {
   sltFun: async (inter) => {
     await inter.deferReply();
     const url = config.coasdb.url;
-    const apiInfo = await (await fetch(url)).json();
-    // const embed = new EmbedBuilder()
-    //   .setFooter({ text: "Next update" })
-    //   .setTimestamp(apiInfo.next_update);
-
     const id = inter.values[0];
 
     const guild = await (await fetch(url + "/guild/" + id)).json();
+    let guildIconURL = null;
+    let guildBannerURL = null;
+    try {
+      if (guild?.discord_server?.id) {
+        const dguild = await inter.client.guilds.fetch(guild.discord_server.id);
+        guildIconURL = dguild.iconURL({ size: 128 });
+        guildBannerURL = dguild.bannerURL({ size: 1024 });
+      }
+    } catch (e) { }
 
-    inter.editReply("```\n" +
-      JSON.stringify(guild, null, 2) + "\n" +
-      JSON.stringify(apiInfo, null, 2)
-      + "\n```");
+    inter.editReply({
+      embeds: [(await CoaPrettier.guildToEmbed(
+        guild,
+        guildIconURL,
+        guildBannerURL
+      ))[0]]
+    });
   }
 }
 

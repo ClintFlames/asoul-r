@@ -62,13 +62,20 @@ const command: ICommand = {
 			return inter.editReply({ embeds: [embed] });
 		}
 		let guild = null;
+		let guildIconURL = null;
 		if (player.guild_id) guild = await (await fetch(url + "/guild/" + player.guild_id)).json();
+		try {
+			if (guild?.discord_server?.id) guildIconURL = (
+				await inter.client.guilds.fetch(guild.discord_server.id)
+			).iconURL({ size: 64 });
+		} catch (e) { }
 
 		// If found player if one
 		if (player.length == 1 || !Array.isArray(player)) return inter.editReply({
 			embeds: [(await CoaPrettier.playerToEmbed(
 				player.length == 1 ? player[0] : player,
-				guild
+				guild,
+				guildIconURL
 			))[0]]
 		});
 
@@ -100,12 +107,19 @@ const command: ICommand = {
 
 		const player = await (await fetch(url + "/user/" + id)).json();
 		let guild = null;
+		let guildIconURL = null;
 		if (player.guild_id) guild = await (await fetch(url + "/guild/" + player.guild_id)).json();
+		try {
+			if (guild?.discord_server?.id) guildIconURL = (
+				await inter.client.guilds.fetch(guild.discord_server.id)
+			).iconURL({ size: 128 });
+		} catch (e) { }
 
 		inter.editReply({
 			embeds: [(await CoaPrettier.playerToEmbed(
 				player,
-				guild
+				guild,
+				guildIconURL
 			))[0]]
 		});
 	}

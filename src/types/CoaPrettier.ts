@@ -160,7 +160,7 @@ export class CoaPrettier {
     return [embed, false];
   }
 
-  static async playerToEmbed(player: any, guild: any): Promise<EmbedRes> {
+  static async playerToEmbed(player: any, guild: any, guildIconURL: any): Promise<EmbedRes> {
     const [embed, isApiDown] = await this.apiInfoToEmbed();
 
     if (isApiDown) return [embed, isApiDown];
@@ -176,8 +176,7 @@ export class CoaPrettier {
     if (guild) embed.setAuthor({
       name: guild.name,
       url: guild.discord_server?.invite,
-      // TODO: Guild icon
-      // iconURL: "guild icon"
+      iconURL: guildIconURL
     });
 
     embed
@@ -206,6 +205,69 @@ Global: ${prettyNumber(player.rank.global)}
           inline: false
         },
       )
+
+    return [embed, isApiDown];
+  }
+
+  static async guildToEmbed(
+    guild: any,
+    guildIconURL: any,
+    guildBannerURL: any
+  ): Promise<EmbedRes> {
+    const [embed, isApiDown] = await this.apiInfoToEmbed();
+
+    if (isApiDown) return [embed, isApiDown];
+
+    const maxDisplay = 20;
+    const url = config.coasdb.url;
+    const members: { name: string, xp: number }[] = [];
+    const owners: string[] = [];
+
+    // Get members and their xp
+    for (const id of guild.member.current_members) {
+      const player = await (
+        await fetch(url + "/user/" + id)
+      ).json();
+      members.push({
+        name: player.name,
+        xp: player.total_xp
+      });
+    }
+    for (const id of guild.member.include_owner) {
+      const name = members.find(v => v.name.toLowerCase() == id)?.name;
+      if (name) owners.push(name);
+    }
+
+    embed.setColor(0x66ff66)
+      .setImage(guildBannerURL)
+      .setAuthor({
+        name: guild.name,
+        url: guild.discord_server?.invite,
+        iconURL: guildIconURL,
+      })
+      .setDescription(guild.description)
+      .addFields(
+        {
+          name: "Rank",
+          value: `Total XP: ${prettyNumber(guild.xp)}
+Rank: ${guild.rank} `,
+          inline: false
+        },
+        {
+          name: `Owners`,
+          value: owners.join("\n"),
+          inline: false
+        },
+        {
+          name: `Members(${guild.member.current_members.length})`,
+          value: members.slice(0, maxDisplay)
+            .sort((a, b) => b.xp - a.xp)
+            .map(v => `${v.name} (${prettyNumber(v.xp)})`)
+            .join("\n") +
+            (members.length > maxDisplay ? "\n..." : ""),
+          inline: false
+        }
+      );
 
     return [embed, isApiDown];
   }
