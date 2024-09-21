@@ -218,57 +218,70 @@ Global: ${prettyNumber(player.rank.global)}
 
     if (isApiDown) return [embed, isApiDown];
 
-    const maxDisplay = 20;
-    const url = config.coasdb.url;
-    const members: { name: string, xp: number }[] = [];
-    const owners: string[] = [];
+    try {
+      const maxDisplay = 20;
+      const url = config.coasdb.url;
+      const members: { name: string, xp: number }[] = [];
+      const owners: string[] = [];
 
-    // Get members and their xp
-    for (const id of guild.member.current_members) {
-      const player = await (
-        await fetch(url + "/user/" + id)
-      ).json();
-      members.push({
-        name: player.name,
-        xp: player.total_xp
-      });
-    }
-    for (const id of guild.member.include_owner) {
-      const name = members.find(v => v.name.toLowerCase() == id)?.name;
-      if (name) owners.push(name);
-    }
+      // Get members and their xp
+      for (const id of guild.member.current_members) {
+        const player = await (
+          await fetch(url + "/user/" + id)
+        ).json();
+        members.push({
+          name: player.name,
+          xp: player.total_xp
+        });
+      }
+      for (const id of guild.member.include_owner) {
+        const name = members.find(v => v.name.toLowerCase() == id)?.name;
+        if (name) owners.push(name);
+      }
 
-    embed.setColor(0x66ff66)
-      .setImage(guildBannerURL)
-      .setAuthor({
-        name: guild.name,
-        url: guild.discord_server?.invite,
-        iconURL: guildIconURL,
-      })
-      .setDescription(guild.description)
-      .addFields(
-        {
-          name: "Rank",
-          value: `Total XP: ${prettyNumber(guild.xp)}
+      embed.setColor(0x66ff66)
+        .setImage(guildBannerURL)
+        .setAuthor({
+          name: guild.name,
+          url: guild.discord_server?.invite,
+          iconURL: guildIconURL,
+        })
+        .setDescription(guild.description)
+        .addFields(
+          {
+            name: "Rank",
+            value: `Total XP: ${prettyNumber(guild.xp)}
 Rank: ${guild.rank} `,
-          inline: false
-        },
-        {
-          name: `Owners`,
-          value: owners.join("\n"),
-          inline: false
-        },
-        {
-          name: `Members(${guild.member.current_members.length})`,
-          value: members.slice(0, maxDisplay)
-            .sort((a, b) => b.xp - a.xp)
-            .map(v => `${v.name} (${prettyNumber(v.xp)})`)
-            .join("\n") +
-            (members.length > maxDisplay ? "\n..." : ""),
-          inline: false
-        }
-      );
+            inline: false
+          },
+          {
+            name: `Owners`,
+            value: owners.length != 0 ? owners.join("\n") : "...",
+            inline: false
+          },
+          {
+            name: `Members(${guild.member.current_members.length})`,
+            value: members.length == 0 ? "..." : (
+              members.slice(0, maxDisplay)
+                .sort((a, b) => b.xp - a.xp)
+                .map(v => `${v.name} (${prettyNumber(v.xp)})`)
+                .join("\n") +
+              (members.length > maxDisplay ? "\n..." : "")
+            ),
+            inline: false
+          },
+          {
+            name: "DB ID",
+            value: guild._id
+          }
+        );
 
-    return [embed, isApiDown];
+      return [embed, isApiDown];
+    } catch (e) {
+      console.log(e);
+      embed.setColor(0xff6666)
+        .setTitle("Something went wrong...");
+      return [embed, true];
+    }
   }
 }
