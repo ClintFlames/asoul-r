@@ -159,7 +159,6 @@ const command: ICommand = {
     const newGuild = {
       name: guild.name,
       description: guild.description,
-      regex: guild.member.regex,
       discord_server: guild.discord_server,
       include: guild.member.include,
       include_owner: guild.member.include_owner,
@@ -182,6 +181,7 @@ const command: ICommand = {
 
         if (typeof newName == "string") newGuild.name = newName;
         if (typeof newDescription == "string") newGuild.description = newDescription;
+        // @ts-ignore
         if (typeof newRegex == "string") newGuild.regex = newRegex;
 
         break;
