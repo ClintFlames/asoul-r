@@ -138,7 +138,7 @@ type EmbedRes = [EmbedBuilder, boolean];
 
 const prettyNumber = (n: number) => n.toLocaleString("en-US");
 
-// TODO: That bad af, and need rewrite of course
+// TODO: This is bad af, and need rewrite of course
 export class CoaPrettier {
   static async apiInfoToEmbed(): Promise<EmbedRes> {
     const url = config.coasdb.url;
@@ -180,7 +180,7 @@ export class CoaPrettier {
     });
 
     embed
-      .setTitle(player.name)
+      .setTitle((player.lonewolf ? "🐺 " : "") + player.name)
       .addFields(
         {
           name: "Skills",
